@@ -13,7 +13,8 @@ class Program
 
         // Création du dossier dans lequel seront enregistré les fichier en png et en dot, le chemin doit changer pour s'adapter à l'utilisateur
         // J'ai mis un chemin en absolue sur mon bureau mais il faudra mettre le bon chemin pour enregistrer les fichier au bon endroit
-        
+
+        // Je récupère le répertoire de base de l'application
         string baseDirectory = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName;
         string Emplacement_fichiers = baseDirectory;
         Directory.CreateDirectory(Emplacement_fichiers);
