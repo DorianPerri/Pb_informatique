@@ -19,7 +19,7 @@ class Program
         string Emplacement_fichiers = baseDirectory;
         Directory.CreateDirectory(Emplacement_fichiers);
 
-        // Ici on récupère le chemin (en absolue encore) pour accéder au fichier soc-karate
+        // Ici on récupère le chemin pour accéder au fichier soc-karate
         string filePath = Path.Combine(baseDirectory, "soc-karate.mtx");
         string Chemin_dot = Path.Combine(Emplacement_fichiers, "graph.dot");
         string Chemin_Image = Path.Combine(Emplacement_fichiers, "graph.png");
