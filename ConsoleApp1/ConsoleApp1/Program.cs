@@ -13,11 +13,14 @@ class Program
 
         // Création du dossier dans lequel seront enregistré les fichier en png et en dot, le chemin doit changer pour s'adapter à l'utilisateur
         // J'ai mis un chemin en absolue sur mon bureau mais il faudra mettre le bon chemin pour enregistrer les fichier au bon endroit
-        string Emplacement_fichiers = "C:\\Users\\Dorian\\Desktop\\Graphes";
+
+        // Je récupère le répertoire de base de l'application
+        string baseDirectory = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName;
+        string Emplacement_fichiers = baseDirectory;
         Directory.CreateDirectory(Emplacement_fichiers);
 
         // Ici on récupère le chemin (en absolue encore) pour accéder au fichier soc-karate
-        string filePath = "C:\\Users\\Dorian\\Desktop\\2_Info\\Pb_informatique\\1er_mars\\Association-soc-karate\\soc-karate.mtx";
+        string filePath = Path.Combine(baseDirectory, "soc-karate.mtx");
         string Chemin_dot = Path.Combine(Emplacement_fichiers, "graph.dot");
         string Chemin_Image = Path.Combine(Emplacement_fichiers, "graph.png");
 
