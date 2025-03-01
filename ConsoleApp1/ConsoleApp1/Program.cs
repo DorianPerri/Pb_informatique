@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
@@ -42,12 +42,7 @@ class Program
         // Vérification si le graphe est connexe
         Console.WriteLine("Le graphe est connexe : " + graphe.EstConnexe());
         Console.WriteLine();
-        Console.WriteLine("---------------------------------------------------------------------------------------------");
-
-        // Affichage de la liste des noeuds
-        graphe.AfficherNoeuds();
-        Console.WriteLine();
-        Console.WriteLine("---------------------------------------------------------------------------------------------");
+        Console.WriteLine("---------------------------------------------------------------------------------------------");        
 
         // Parcours du graphe        
         int[] Les_noeuds = graphe.Tableau_des_noeuds();
@@ -66,6 +61,31 @@ class Program
         Console.WriteLine("Parcours en largeur:");
         Console.WriteLine();
         graphe.BFS_iteratif(Les_noeuds[r]);
+        Console.WriteLine();
+        Console.WriteLine("---------------------------------------------------------------------------------------------");
+
+        // Affichage de la liste des noeuds
+        graphe.AfficherNoeuds();
+        Console.WriteLine();
+        Console.WriteLine("---------------------------------------------------------------------------------------------");
+
+        // Circuit
+        Console.Write("Entrez un sommet pour trouver un circuit : ");
+        int sommetChoisi;
+        while (!int.TryParse(Console.ReadLine(), out sommetChoisi) || !graphe.Tableau_des_noeuds().Contains(sommetChoisi))
+        {
+            Console.Write("Sommet invalide, veuillez réessayer : ");
+        }
+
+        List<int> circuit = graphe.TrouverCircuit(sommetChoisi);
+        if (circuit.Count > 0)
+        {
+            Console.WriteLine("Circuit trouvé : " + string.Join(" -> ", circuit));
+        }
+        else
+        {
+            Console.WriteLine("Aucun circuit trouvé à partir du sommet " + sommetChoisi);
+        }
         Console.WriteLine();
         Console.WriteLine("---------------------------------------------------------------------------------------------");
 
