@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -216,7 +216,7 @@ namespace ConsoleApp1
             while (file.Count > 0)
             {
                 int sommetCourant = file.Dequeue();
-                Console.WriteLine($"Sommet {sommetCourant} découvert à la date {dateDecouverte[sommetCourant]}");
+                Console.WriteLine("Sommet "+sommetCourant+" découvert à la date "+dateDecouverte[sommetCourant]);
 
                 // Exploration des voisins du sommet courant
                 foreach (int voisin in adjacence[sommetCourant])
@@ -244,6 +244,56 @@ namespace ConsoleApp1
                 }
                 Console.WriteLine(val+"| "+ couleurs[noeud.Id]+"    | "+ dateDecouverte[noeud.Id]);
             }
+        }
+
+        public List<int> TrouverCircuit(int sommetDepart)
+        {
+            List<int> circuit = new();
+            HashSet<int> visites = new();
+            Stack<int> pile = new();
+            Dictionary<int, int> predecesseurs = new();
+
+            pile.Push(sommetDepart);
+            visites.Add(sommetDepart);
+            predecesseurs[sommetDepart] = -1;
+
+            while (pile.Count > 0)
+            {
+                int sommetCourant = pile.Peek();
+                bool trouve = false;
+
+                foreach (int voisin in adjacence[sommetCourant])
+                {
+                    if (voisin == sommetDepart && visites.Count > 1)
+                    {
+                        // On a trouvé un circuit qui revient au départ
+                        circuit.Add(sommetDepart);
+                        int current = sommetCourant;
+                        while (current != -1)
+                        {
+                            circuit.Add(current);
+                            current = predecesseurs[current];
+                        }
+                        circuit.Reverse();
+                        return circuit;
+                    }
+
+                    if (!visites.Contains(voisin))
+                    {
+                        pile.Push(voisin);
+                        visites.Add(voisin);
+                        predecesseurs[voisin] = sommetCourant;
+                        trouve = true;
+                        break;
+                    }
+                }
+
+                if (!trouve)
+                {
+                    pile.Pop();
+                }
+            }
+            return new List<int>(); // Aucun circuit trouvé
         }
     }
 
