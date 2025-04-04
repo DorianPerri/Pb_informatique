@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,12 +8,37 @@ namespace ConsoleApp1
 {
     internal class Lien
     {
-        public Noeud Noeud1 { get; }
-        public Noeud Noeud2 { get; }
-        public Lien(Noeud n1, Noeud n2)
+        //attributs
+        public int id_station;
+        public string nom;
+        public int id_precedent;
+        public int id_suivant;
+        public int temps_deux_stations;
+        public int temps_changement;
+        public Lien(int id_station, string nom, int id_precedent, int id_suivant, int temps_deux_stations, int temps_changement)
         {
-            Noeud1 = n1;
-            Noeud2 = n2;
+            this.id_station = id_station;
+            this.nom = nom;
+            this.id_precedent = id_precedent;
+            this.id_suivant = id_suivant;
+            this.temps_deux_stations = temps_deux_stations;
+            this.temps_changement = temps_changement;
         }
+
+        //get/set 
+        public int Id_station
+        { get { return id_station; } }
+        public string Nom
+        { get { return nom; } }
+        public int Id_precedent
+        { get { return id_precedent; } }
+        public int Id_suivant
+        { get { return id_suivant; } }
+        public int Temps_deux_stations
+        { get { return temps_deux_stations; } set { temps_deux_stations = value; } }
+        public int Temps_changement
+        { get { return temps_changement; } }
+
+
     }
 }
