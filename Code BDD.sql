@@ -276,3 +276,11 @@ ON DUPLICATE KEY UPDATE Quantite_stockee = Quantite_stockee + REPLACE(Volume_3, 
 DROP TABLE IF EXISTS Temp_Commandes;
 SELECT * FROM Commande;
 SELECT * FROM Ingredient; 
+
+-- Insérer des utilisateurs pour les tests
+INSERT INTO Utilisateur (ID_Client, Nom, Prenom, Rue, Numero, Code_Postal, Ville, Telephone, Email, Metro_Proche, Type_client, Mot_De_Passe) 
+VALUES (7654321, 'Etchebest', 'Phillipe', 'Rue des Moines' , 5 , 75001, 'Paris', 0624469588, 'phillipe.etchebest@gmail.com' , 'Châtelet', 'cuisinier', '123');
+
+INSERT INTO Utilisateur (ID_Client, Nom, Prenom, Rue, Numero, Code_Postal, Ville, Telephone, Email, Metro_Proche, Type_client, Mot_De_Passe) 
+VALUES (1234567, 'Mbappe', 'Kylian', 'Brocat' , 10 , 75016, 'Paris', 0624469588, 'kylian.mbappe@gmail.com' , 'Nation', 'client', '123');
+
