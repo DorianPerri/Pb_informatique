@@ -1,37 +1,37 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
-    internal class Graphe
+    internal class Graphe<T>
     {
-        private Dictionary<int, Noeud> noeuds = new();
+        private Dictionary<T, Noeud> noeuds = new();
         private List<Lien> liens = new();
-        private Dictionary<int, List<int>> adjacence = new();
+        private Dictionary<T, List<T>> adjacence = new();
 
         public enum Couleur { Blanc, Jaune, Rouge }
-        private Dictionary<int, Couleur> couleurs = new();
-        private Dictionary<int, int> dateDecouverte = new();
-        private Dictionary<int, int> dateFin = new();
-        private Dictionary<int, int> predecesseurs = new();
+        private Dictionary<T, Couleur> couleurs = new();
+        private Dictionary<T, int> dateDecouverte = new();
+        private Dictionary<T, int> dateFin = new();
+        private Dictionary<T, T?> predecesseurs = new();
 
-        public void AjouterNoeud(int id)
+        public void AjouterNoeud(T id, Noeud noeud)
         {
             if (!noeuds.ContainsKey(id))
             {
-                var noeud = new Noeud(id);
                 noeuds[id] = noeud;
-                adjacence[id] = new List<int>();
+                adjacence[id] = new List<T>();
             }
         }
-        public void AjouterLien(int id1, int id2)
+
+        public void AjouterLien(T id1, T id2, int temps)
         {
-            AjouterNoeud(id1);
-            AjouterNoeud(id2);
-            liens.Add(new Lien(noeuds[id1], noeuds[id2]));
+            if (!noeuds.ContainsKey(id1) || !noeuds.ContainsKey(id2))
+                throw new InvalidOperationException("Les noeuds doivent être ajoutés avant de créer un lien.");
+
+            liens.Add(new Lien(noeuds[id1].Id_station, noeuds[id1].Libelle_station, noeuds[id2].Id_station, id2.GetHashCode(), temps, 0));
             adjacence[id1].Add(id2);
             adjacence[id2].Add(id1);
         }
@@ -40,262 +40,180 @@ namespace ConsoleApp1
         {
             foreach (var lien in liens)
             {
-                Console.WriteLine($"{lien.Noeud1.Id} -- {lien.Noeud2.Id}");
-            }
-        }
-        public int[] Tableau_des_noeuds() {
-            int taille = noeuds.Values.Count;
-            int i = 0;
-            int[] Tab_noeud = new int[taille];
-            foreach (var noeud in noeuds.Values)
-            {
-                Tab_noeud[i] = noeud.Id;
-                i++;
-            }
-            TriBulles(Tab_noeud);
-            return Tab_noeud;
-        }
-
-        public void AfficherNoeuds()
-        {
-            int taille = noeuds.Values.Count;
-            int i = 0;
-            int[] Tab_noeud = new int[taille];
-            foreach (var noeud in noeuds.Values)
-            {
-                Tab_noeud[i] = noeud.Id;
-                i++;
-            }
-            TriBulles(Tab_noeud);
-            Console.WriteLine("Voici la liste des noeuds du graphe: ");
-            foreach (var noeuds in Tab_noeud)
-            {
-                Console.Write(noeuds.ToString() + ";");
+                Console.WriteLine($"{lien.id_station} ({lien.nom}) -- {lien.id_suivant} (Temps: {lien.temps_deux_stations})");
             }
         }
 
-        public static void TriBulles(int[] tab)
-        {
-            bool resul = true;
-
-            for (int i = 0; i < tab.Length - 1 && resul; i++)
-            {
-                resul = false;
-                for (int j = 0; j < tab.Length - 1 - i; j++)
-                {
-                    if (tab[j] > tab[j + 1])
-                    {
-                        // Échanger les éléments
-                        int temp = tab[j];
-                        tab[j] = tab[j + 1];
-                        tab[j + 1] = temp;
-                        resul = true;
-                    }
-                }
-            }
-        }
-
-        public void GenererDotFile(string dotFile)
-        {
-            using StreamWriter writer = new(dotFile);
-            writer.WriteLine("graph G {");
-            foreach (var lien in liens)
-            {
-                writer.WriteLine($"    {lien.Noeud1.Id} -- {lien.Noeud2.Id};");
-            }
-            writer.WriteLine("}");
-        }
         public bool EstConnexe()
         {
             if (noeuds.Count == 0) return false;
-            HashSet<int> visites = new();
-            Stack<int> pile = new();
-            int premier = noeuds.Keys.First();
+            HashSet<T> visites = new();
+            Stack<T> pile = new();
+            T premier = noeuds.Keys.First();
             pile.Push(premier);
 
             while (pile.Count > 0)
             {
-                int courant = pile.Pop();
+                T courant = pile.Pop();
                 if (!visites.Contains(courant))
                 {
                     visites.Add(courant);
-                    foreach (int voisin in adjacence[courant])
+                    foreach (T voisin in adjacence[courant])
                         pile.Push(voisin);
                 }
             }
             return visites.Count == noeuds.Count;
         }
-
-        public void DFS_iteratif(int sommetInitial)
-        {
-            // Initialiser les couleurs, les prédécesseurs et les dates
-            Console.WriteLine("Code couleur:\nJaune -> Sommet visité\nRouge -> Sommet sans voisin non visité\nBlanc -> Sommet non visité");
-            foreach (var noeud in noeuds.Values)
+    
+        public void AjouterNoeud(T id)
             {
-                couleurs[noeud.Id] = Couleur.Blanc;
-                predecesseurs[noeud.Id] = -1;  // Aucun prédécesseur au début
-                dateDecouverte[noeud.Id] = -1;
-                dateFin[noeud.Id] = -1;
+                if (!adjacence.ContainsKey(id))
+                {
+                    adjacence[id] = new List<T>();
+                }
             }
 
-            int date = 0;
-            Stack<int> pile = new Stack<int>();
-            pile.Push(sommetInitial);
-            couleurs[sommetInitial] = Couleur.Jaune;
-            dateDecouverte[sommetInitial] = date++;
-
-            while (pile.Count > 0)
+            public void AjouterLien(T id1, T id2)
             {
-                int sommetCourant = pile.Peek();
-                bool SuccesseursNonVisites = false;
+                AjouterNoeud(id1);
+                AjouterNoeud(id2);
+                adjacence[id1].Add(id2);
+                adjacence[id2].Add(id1);
+            }
 
-                // Explorer les voisins
-                foreach (int voisin in adjacence[sommetCourant])
+            public void DFS_iteratif(T sommetInitial)
+            {
+                if (!adjacence.ContainsKey(sommetInitial)) return;
+
+                Console.WriteLine("Code couleur:\nJaune -> Sommet visité\nRouge -> Sommet sans voisin non visité\nBlanc -> Sommet non visité");
+
+                foreach (var noeud in adjacence.Keys)
                 {
-                    if (couleurs[voisin] == Couleur.Blanc)
+                    couleurs[noeud] = Couleur.Blanc;
+                    predecesseurs[noeud] = default;
+                    dateDecouverte[noeud] = -1;
+                    dateFin[noeud] = -1;
+                }
+
+                int date = 0;
+                Stack<T> pile = new();
+                pile.Push(sommetInitial);
+                couleurs[sommetInitial] = Couleur.Jaune;
+                dateDecouverte[sommetInitial] = date++;
+
+                while (pile.Count > 0)
+                {
+                    T sommetCourant = pile.Peek();
+                    bool successeursNonVisites = false;
+
+                    foreach (T voisin in adjacence[sommetCourant])
                     {
-                        // Empiler le voisin et marquer comme visité
-                        pile.Push(voisin);
-                        couleurs[voisin] = Couleur.Jaune;
-                        predecesseurs[voisin] = sommetCourant;
-                        dateDecouverte[voisin] = date++;
-                        SuccesseursNonVisites = true;
-                        break;
-                    }
-                }
-
-                // Si tous les voisins sont visités (couleur = rouge), dépiler
-                if (!SuccesseursNonVisites)
-                {
-                    int sommetFini = pile.Pop();
-                    couleurs[sommetFini] = Couleur.Rouge;
-                    dateFin[sommetFini] = date++;
-                }
-            }
-
-            Console.WriteLine();
-            Console.WriteLine("ID Noeud | Couleur | Date Début | Date Fin");
-            Console.WriteLine("------------------------------------------");
-
-            foreach (var noeud in noeuds.Values)
-            {
-
-                string val = noeud.Id.ToString() + "       ";
-                if (noeud.Id < 10)
-                {
-                    val += " ";
-                }
-                string val2 = dateDecouverte[noeud.Id].ToString() + "         ";
-                if (dateDecouverte[noeud.Id] < 10)
-                {
-                    val2 += " ";
-                }
-                Console.WriteLine(val+ "|" + couleurs[noeud.Id]+"    | "+val2+"| "+dateFin[noeud.Id]);
-            }
-        }
-
-        // BFS (Parcours en largeur) itératif
-        public void BFS_iteratif(int sommetInitial)
-        {
-            Console.WriteLine("Code couleur:\nJaune -> Sommet visité\nRouge -> Sommet sans voisin non visité\nBlanc -> Sommet non visité");
-            foreach (var noeud in noeuds.Values)
-            {
-                couleurs[noeud.Id] = Couleur.Blanc;
-                predecesseurs[noeud.Id] = -1;
-                dateDecouverte[noeud.Id] = -1;
-            }
-
-            Queue<int> file = new Queue<int>();
-            couleurs[sommetInitial] = Couleur.Jaune;
-            dateDecouverte[sommetInitial] = 0;
-            file.Enqueue(sommetInitial);
-
-            int date = 1;
-
-            // Début du parcours BFS
-            while (file.Count > 0)
-            {
-                int sommetCourant = file.Dequeue();
-                Console.WriteLine("Sommet "+sommetCourant+" découvert à la date "+dateDecouverte[sommetCourant]);
-
-                // Exploration des voisins du sommet courant
-                foreach (int voisin in adjacence[sommetCourant])
-                {
-                    if (couleurs[voisin] == Couleur.Blanc)
-                    {
-                        couleurs[voisin] = Couleur.Jaune;
-                        predecesseurs[voisin] = sommetCourant;
-                        dateDecouverte[voisin] = date++;
-                        file.Enqueue(voisin);
-                    }
-                }
-
-                couleurs[sommetCourant] = Couleur.Rouge;  // Le sommet est complètement exploré
-            }
-
-            Console.WriteLine();
-            Console.WriteLine("ID Noeud | Couleur | Date Découverte");
-            Console.WriteLine("------------------------------------");
-            foreach (var noeud in noeuds.Values)
-            {
-                string val = noeud.Id.ToString()+ "      ";
-                if (noeud.Id < 10) {
-                    val+= " ";
-                }
-                Console.WriteLine(val+"| "+ couleurs[noeud.Id]+"    | "+ dateDecouverte[noeud.Id]);
-            }
-        }
-
-        public List<int> TrouverCircuit(int sommetDepart)
-        {
-            List<int> circuit = new();
-            HashSet<int> visites = new();
-            Stack<int> pile = new();
-            Dictionary<int, int> predecesseurs = new();
-
-            pile.Push(sommetDepart);
-            visites.Add(sommetDepart);
-            predecesseurs[sommetDepart] = -1;
-
-            while (pile.Count > 0)
-            {
-                int sommetCourant = pile.Peek();
-                bool trouve = false;
-
-                foreach (int voisin in adjacence[sommetCourant])
-                {
-                    if (voisin == sommetDepart && visites.Count > 1)
-                    {
-                        // On a trouvé un circuit qui revient au départ
-                        circuit.Add(sommetDepart);
-                        int current = sommetCourant;
-                        while (current != -1)
+                        if (couleurs[voisin] == Couleur.Blanc)
                         {
-                            circuit.Add(current);
-                            current = predecesseurs[current];
+                            pile.Push(voisin);
+                            couleurs[voisin] = Couleur.Jaune;
+                            predecesseurs[voisin] = sommetCourant;
+                            dateDecouverte[voisin] = date++;
+                            successeursNonVisites = true;
+                            break;
                         }
-                        circuit.Reverse();
-                        return circuit;
                     }
 
-                    if (!visites.Contains(voisin))
+                    if (!successeursNonVisites)
                     {
-                        pile.Push(voisin);
-                        visites.Add(voisin);
-                        predecesseurs[voisin] = sommetCourant;
-                        trouve = true;
-                        break;
+                        T sommetFini = pile.Pop();
+                        couleurs[sommetFini] = Couleur.Rouge;
+                        dateFin[sommetFini] = date++;
                     }
-                }
-
-                if (!trouve)
-                {
-                    pile.Pop();
                 }
             }
-            return new List<int>(); // Aucun circuit trouvé
-        }
+
+            public void BFS_iteratif(T sommetInitial)
+            {
+                if (!adjacence.ContainsKey(sommetInitial)) return;
+
+                Console.WriteLine("Code couleur:\nJaune -> Sommet visité\nRouge -> Sommet sans voisin non visité\nBlanc -> Sommet non visité");
+
+                foreach (var noeud in adjacence.Keys)
+                {
+                    couleurs[noeud] = Couleur.Blanc;
+                    predecesseurs[noeud] = default;
+                    dateDecouverte[noeud] = -1;
+                }
+
+                Queue<T> file = new();
+                couleurs[sommetInitial] = Couleur.Jaune;
+                dateDecouverte[sommetInitial] = 0;
+                file.Enqueue(sommetInitial);
+
+                int date = 1;
+                while (file.Count > 0)
+                {
+                    T sommetCourant = file.Dequeue();
+                    foreach (T voisin in adjacence[sommetCourant])
+                    {
+                        if (couleurs[voisin] == Couleur.Blanc)
+                        {
+                            couleurs[voisin] = Couleur.Jaune;
+                            predecesseurs[voisin] = sommetCourant;
+                            dateDecouverte[voisin] = date++;
+                            file.Enqueue(voisin);
+                        }
+                    }
+                    couleurs[sommetCourant] = Couleur.Rouge;
+                }
+            }
+
+            public List<T> TrouverCircuit(T sommetDepart)
+            {
+                if (!adjacence.ContainsKey(sommetDepart)) return new List<T>();
+
+                List<T> circuit = new();
+                HashSet<T> visites = new();
+                Stack<T> pile = new();
+                Dictionary<T, T?> predecesseurs = new();
+
+                pile.Push(sommetDepart);
+                visites.Add(sommetDepart);
+                predecesseurs[sommetDepart] = default;
+
+                while (pile.Count > 0)
+                {
+                    T sommetCourant = pile.Peek();
+                    bool trouve = false;
+
+                    foreach (T voisin in adjacence[sommetCourant])
+                    {
+                        if (EqualityComparer<T>.Default.Equals(voisin, sommetDepart) && visites.Count > 1)
+                        {
+                            circuit.Add(sommetDepart);
+                            T? current = sommetCourant;
+                            while (current != null && predecesseurs.ContainsKey(current))
+                            {
+                                circuit.Add(current);
+                                current = predecesseurs[current];
+                            }
+                            circuit.Reverse();
+                            return circuit;
+                        }
+
+                        if (!visites.Contains(voisin))
+                        {
+                            pile.Push(voisin);
+                            visites.Add(voisin);
+                            predecesseurs[voisin] = sommetCourant;
+                            trouve = true;
+                            break;
+                        }
+                    }
+                    if (!trouve) pile.Pop();
+                }
+                return new List<T>();
+            }
     }
 
 }
+
+
+
 
