@@ -312,3 +312,66 @@ VALUES ('Quiche', CURDATE(), '2025-01-01', 18.00, '', 'française', 'plat', 2, 0
 
 INSERT INTO Cuisine (ID_Client, Nom_Plat)
 VALUES (7654321, 'Quiche');
+
+-- Plats pour Phillipe
+INSERT INTO Plat (Nom_Plat, Date_Fabrication, Date_Peremption, Prix_plat, Regime, Origine, Type_plat, Nombre_personne, Image)
+VALUES 
+('Lasagnes', CURDATE(), '2025-12-31', 15.50, 'standard', 'italienne', 'plat', 2, 0),
+('Tartiflette', CURDATE(), '2025-12-31', 17.00, 'standard', 'savoyarde', 'plat', 2, 0);
+
+INSERT INTO Cuisine (ID_Client, Nom_Plat) VALUES 
+(7654321, 'Lasagnes'),
+(7654321, 'Tartiflette');
+
+-- Plats pour Karim
+INSERT INTO Plat (Nom_Plat, Date_Fabrication, Date_Peremption, Prix_plat, Regime, Origine, Type_plat, Nombre_personne, Image)
+VALUES 
+('Couscous', CURDATE(), '2025-12-31', 16.00, 'halal', 'maghreb', 'plat', 2, 0),
+('Poulet Yassa', CURDATE(), '2025-12-31', 14.50, 'halal', 'sénégalaise', 'plat', 2, 0);
+
+INSERT INTO Cuisine (ID_Client, Nom_Plat) VALUES 
+(7896524, 'Couscous'),
+(7896524, 'Poulet Yassa');
+
+SET @date_commande = NOW();
+SET @date_livraison = DATE_ADD(NOW(), INTERVAL 2 DAY);
+
+INSERT INTO Commande (Prix_commande, Quantite, Date_Commande, Date_Livraison, Status)
+VALUES (15.50, 1, @date_commande, @date_livraison, 'en cours');
+SET @cmd1 = LAST_INSERT_ID();
+
+INSERT INTO Preparer (Numero_Commande, Adresse_expedition, ID_Client)
+VALUES (@cmd1, 'rue des angles, Paris', 7654321);
+INSERT INTO Passer (Numero_Commande, Adresse_livraison, ID_Client)
+VALUES (@cmd1, 'rue des Moines, Paris', 2875652);
+INSERT INTO Contient (Numero_Commande, Nom_Plat) VALUES (@cmd1, 'Lasagnes');
+
+INSERT INTO Commande (Prix_commande, Quantite, Date_Commande, Date_Livraison, Status)
+VALUES (16.00, 1, @date_commande, @date_livraison, 'en cours');
+SET @cmd2 = LAST_INSERT_ID();
+
+INSERT INTO Preparer (Numero_Commande, Adresse_expedition, ID_Client)
+VALUES (@cmd2, 'rue des boulangers, Paris', 7896524);
+INSERT INTO Passer (Numero_Commande, Adresse_livraison, ID_Client)
+VALUES (@cmd2, 'rue des Moines, Paris', 2875652);
+INSERT INTO Contient (Numero_Commande, Nom_Plat) VALUES (@cmd2, 'Couscous');
+
+INSERT INTO Commande (Prix_commande, Quantite, Date_Commande, Date_Livraison, Status)
+VALUES (17.00, 1, @date_commande, @date_livraison, 'en cours');
+SET @cmd3 = LAST_INSERT_ID();
+
+INSERT INTO Preparer (Numero_Commande, Adresse_expedition, ID_Client)
+VALUES (@cmd3, 'rue des angles, Paris', 7654321);
+INSERT INTO Passer (Numero_Commande, Adresse_livraison, ID_Client)
+VALUES (@cmd3, 'allée des seigneurs, Paris', 1234567);
+INSERT INTO Contient (Numero_Commande, Nom_Plat) VALUES (@cmd3, 'Tartiflette');
+
+INSERT INTO Commande (Prix_commande, Quantite, Date_Commande, Date_Livraison, Status)
+VALUES (14.50, 1, @date_commande, @date_livraison, 'en cours');
+SET @cmd4 = LAST_INSERT_ID();
+
+INSERT INTO Preparer (Numero_Commande, Adresse_expedition, ID_Client)
+VALUES (@cmd4, 'rue des boulangers, Paris', 7896524);
+INSERT INTO Passer (Numero_Commande, Adresse_livraison, ID_Client)
+VALUES (@cmd4, 'allée des seigneurs, Paris', 1234567);
+INSERT INTO Contient (Numero_Commande, Nom_Plat) VALUES (@cmd4, 'Poulet Yassa');
