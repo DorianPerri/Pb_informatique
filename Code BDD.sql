@@ -277,10 +277,38 @@ DROP TABLE IF EXISTS Temp_Commandes;
 SELECT * FROM Commande;
 SELECT * FROM Ingredient; 
 
--- Insérer des utilisateurs pour les tests
-INSERT INTO Utilisateur (ID_Client, Nom, Prenom, Rue, Numero, Code_Postal, Ville, Telephone, Email, Metro_Proche, Type_client, Mot_De_Passe) 
-VALUES (7654321, 'Etchebest', 'Phillipe', 'Rue des Moines' , 5 , 75001, 'Paris', 0624469588, 'phillipe.etchebest@gmail.com' , 'Châtelet', 'cuisinier', '123');
+-- INSERTION DES CLIENTS
+INSERT INTO Utilisateur (ID_Client, Nom, Prenom, Rue, Numero, Code_Postal, Ville, Telephone, Email, Metro_Proche, Type_client, Mot_De_Passe)
+VALUES
+(2875652, 'Guérain', 'Tom', 'rue des Moines', 4, 75017, 'Paris', 0612345678, 'tom.guerain@example.com', 'Brochant', 'client','123'),
+(1234567, 'Dupont', 'Antoine', 'allée des seigneurs', 65, 75001, 'Paris', 0698765432, 'antoine.dupont@example.com', 'Champs-Elysées - Clemenceau', 'client', '123');
 
-INSERT INTO Utilisateur (ID_Client, Nom, Prenom, Rue, Numero, Code_Postal, Ville, Telephone, Email, Metro_Proche, Type_client, Mot_De_Passe) 
-VALUES (1234567, 'Mbappe', 'Kylian', 'Brocat' , 10 , 75016, 'Paris', 0624469588, 'kylian.mbappe@gmail.com' , 'Nation', 'client', '123');
+-- Association à la table Client
+INSERT INTO Client (ID_Client, Date_inscription, Nombre_commande)
+VALUES
+(2875652, CURDATE(), 0),
+(1234567, CURDATE(), 0);
 
+-- Association à la table Particulier
+INSERT INTO Particulier (ID_Client, Prenom)
+VALUES
+(2875652, 'Tom'),
+(1234567, 'Antoine');
+
+-- INSERTION DES CUISINIERS
+INSERT INTO Utilisateur (ID_Client, Nom, Prenom, Rue, Numero, Code_Postal, Ville, Telephone, Email, Metro_Proche, Type_client, Mot_De_Passe)
+VALUES
+(7654321, 'Etchebest', 'Phillipe', 'rue des angles', 89, 75017, 'Paris', 0678954321, 'phillipe.etchebest@example.com', 'Concorde', 'cuisinier', '123'),
+(7896524, 'Diop', 'Karim', 'rue des boulangers', 45, 75003, 'Paris', 0687412569, 'karim.diop@example.com', 'Olympiades', 'cuisinier', '123');
+
+-- Association à la table Cuisinier
+INSERT INTO Cuisinier (ID_Client, Prenom_cuisinier, Nombre_commande_livrer, Note_moyenne_cuisinier)
+VALUES
+(7654321, 'Phillipe', 0, 0.0),
+(7896524, 'Karim', 0, 0.0);
+
+INSERT INTO Plat (Nom_Plat, Date_Fabrication, Date_Peremption, Prix_plat, Regime, Origine, Type_plat, Nombre_personne, Image)
+VALUES ('Quiche', CURDATE(), '2025-01-01', 18.00, '', 'française', 'plat', 2, 0);
+
+INSERT INTO Cuisine (ID_Client, Nom_Plat)
+VALUES (7654321, 'Quiche');
