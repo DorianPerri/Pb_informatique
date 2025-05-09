@@ -18,16 +18,16 @@ L'application est maintenant ouverte.
 Vous avez plusieurs choix. 
 Pour créer un utilisateur vous serez guidé pendant le processus. Si vous comptez utiliser ce client retenez bien l'identifiant qui sera généré
 Pour vous connecter en tant que client 2 choix s'offrent à vous:
-  - soit vous utilisez un client par défaut créer pour que vous puissiez tester l'application. Son identifiant est 1234567 et son mot de passe est 123
+  - soit vous utilisez un client par défaut créer pour que vous puissiez tester l'application. Son identifiant est 2875652 et son mot de passe est 123
   - soit vous utilisez le client que vous aurez créé précédemment
 
 Pour vous connecter en tant que cuisinier 2 choix s'offrent à vous:
   - soit vous utilisez un client par défaut créer pour que vous puissiez tester l'application. Son identifiant est 7654321 et son mot de passe est 123
   - soit vous utilisez le cuisinier que vous aurez créé précédemment
 
-Pour créer la carte du métro, il suffit simplement de choisir la 4e option
+Une fois dans l'application, vous serez face à un menu qui vous guidera dans vos options
 
-La 5e option permet d'afficher la carte du métro (sous forme de graphe
-
-La 6e option vous permet de trouver le chemin le plus court entre 2 stations, ce chemin est recherché par 3 algorithmes différents 
-Il vous faudra faire attention à rentrer des stations existantes et bien orthographiées
+Si le programme ne compile pas, installez les package nuggets:
+- Graphizv
+- MySQL
+- JSON
