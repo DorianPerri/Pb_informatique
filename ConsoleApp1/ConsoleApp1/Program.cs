@@ -71,6 +71,7 @@ class Program
                     Console.WriteLine("6: Chercher un PCC");
                     Console.WriteLine("7: Graphe d'interraction entre les utilisateurs");
                     Console.WriteLine("8: Exporter la base de données en XML");
+                    Console.WriteLine("9: Voir les meilleurs cuisiniers et meilleurs clients");
                     Console.WriteLine("Échap: Quitter");
 
                     ConsoleKeyInfo cki = Console.ReadKey(true);
@@ -1278,6 +1279,56 @@ class Program
                             Pause();
                             break;
 
+                        case ConsoleKey.D9:
+                        case ConsoleKey.NumPad9:
+                            Console.Clear();
+                            MySqlCommand stats = connection.CreateCommand();
+                            stats.CommandText = @"
+                                                   SELECT u.Prenom, u.Nom, c.Note_moyenne_cuisinier 
+                                                   FROM Cuisinier c 
+                                                   JOIN Utilisateur u ON c.ID_Client = u.ID_Client 
+                                                   ORDER BY c.Note_moyenne_cuisinier DESC 
+                                                   LIMIT 3;
+                                                            ";
+
+                            MySqlDataReader reader_statss = stats.ExecuteReader();
+                            Console.WriteLine("Top 3 des meilleurs cuisiniers");
+                            while (reader_statss.Read())
+                            {
+
+                                string nom = reader_statss.GetString(0);
+                                string prenom = reader_statss.GetString(1);
+                                decimal note = reader_statss.GetDecimal(2);
+                                Console.WriteLine($"{nom} {prenom} : {note}");
+                            }
+                            reader_statss.Close();
+
+                            MySqlCommand stats_client = connection.CreateCommand();
+                            stats.CommandText = @"
+                                                            SELECT u.Prenom, u.Nom, cl.Nombre_commande 
+                                                            FROM Client cl 
+                                                            JOIN Utilisateur u ON cl.ID_Client = u.ID_Client 
+                                                            ORDER BY cl.Nombre_commande DESC 
+                                                            LIMIT 3;
+                                                        ";
+
+                            MySqlDataReader reader_stats_client = stats.ExecuteReader();
+
+                            Console.WriteLine();
+                            Console.WriteLine("Top 3 des meilleurs clients");
+                            while (reader_stats_client.Read())
+                            {
+
+                                string nom = reader_stats_client.GetString(0);
+                                string prenom = reader_stats_client.GetString(1);
+                                decimal nb_commande = reader_stats_client.GetDecimal(2);
+                                Console.WriteLine($"{nom} {prenom} : {nb_commande}");
+                            }
+                            reader_stats_client.Close();                       
+
+
+                            Pause();
+                            break;
 
                         case ConsoleKey.Escape:
                             Console.Clear();
