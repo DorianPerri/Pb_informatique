@@ -8,7 +8,7 @@ namespace ConsoleApp1
 {
     internal class Noeud
     {
-        //attributs
+
         public int id_station;
         public string libelle_ligne;
         public string libelle_station;
@@ -17,7 +17,16 @@ namespace ConsoleApp1
         public string commune;
         public int code_commune;
 
-        //constructeur
+        /// <summary>
+        /// Constructeur classique
+        /// </summary>
+        /// <param name="id_station">identifiant de la station</param>
+        /// <param name="libelle_ligne">nom de la ligne de la station</param>
+        /// <param name="libelle_station">nom de la station</param>
+        /// <param name="longitude">longitude</param>
+        /// <param name="latitude">latitude</param>
+        /// <param name="commune">comme ou se situe la station</param>
+        /// <param name="code_commune">identifiant de la commune</param>
         public Noeud(int id_station, string libelle_ligne, string libelle_station, float longitude, float latitude,
             string commune, int code_commune)
         {
@@ -30,7 +39,7 @@ namespace ConsoleApp1
             this.code_commune = code_commune;
         }
 
-        //get/set
+
         public int Id_station
         {
             get { return this.id_station; }
@@ -38,7 +47,7 @@ namespace ConsoleApp1
         public string Libelle_ligne
         {
             get { return this.libelle_ligne; }
-            set { this.Libelle_ligne = value; }
+            set { this.libelle_ligne = value; }
         }
         public string Libelle_station
         {
@@ -61,7 +70,14 @@ namespace ConsoleApp1
         {
             get { return this.code_commune; }
         }
+
+        public static int ComparerParDistance(Noeud a, Noeud b, Dictionary<Noeud, int> distances)
+        {
+            return distances[a].CompareTo(distances[b]);
+        }
+
     }
+
 
 
 }
